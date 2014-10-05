@@ -5,7 +5,7 @@ import spark.servlet.SparkApplication;
 
 import javax.naming.ConfigurationException;
 
-import static SpartJavaSample.Tinder.*;
+import static SpartJavaSample.Router.*;
 
 public class Application implements SparkApplication
 {
@@ -21,10 +21,13 @@ public class Application implements SparkApplication
     @Override
     public void init()
     {
-        route("/token").havingMethods("get", "post")
-            .to(TokenController.class, usingContainer(appContainer), renderedWith("token.vm"));
+        route("/authorize").havingMethods("get", "post")
+            .to(AuthorizeController.class, usingContainer(appContainer), renderedWith("authorize.vm"));
 
-        route("/authorize").havingMethod("get")
-            .to(AuthorizeController.class, usingContainer(appContainer));
+        route("/login").havingMethod("get")
+            .to(LoginController.class, usingContainer(appContainer), renderedWith("login.vm"));
+
+        route("/token").havingMethod("get")
+            .to(TokenController.class, usingContainer(appContainer));
     }
 }

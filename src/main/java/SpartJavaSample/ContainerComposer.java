@@ -2,15 +2,8 @@ package SpartJavaSample;
 
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.PicoContainer;
-import org.picocontainer.injectors.ConstructorInjection;
-import org.picocontainer.parameters.ComponentParameter;
-import org.picocontainer.parameters.ConstantParameter;
 
-import javax.naming.ConfigurationException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+@SuppressWarnings("unused")
 class ContainerComposer
 {
     public static void composeApplication(DefaultPicoContainer appContainer)
@@ -18,6 +11,7 @@ class ContainerComposer
         //To change body of created methods use File | Settings | File Templates.
         appContainer.addComponent(AuthorizeController.class);
         appContainer.addComponent(TokenController.class);
+        appContainer.addComponent(LoginController.class);
     }
 
     public static void composeSession(MutablePicoContainer container)

@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+<hgroup>
+    <h1>Spark Test</h1>
+    <h2>Login</h2>
+</hgroup>
+
+<form method="post">
+    <input name="username"/>
+    <input name="password"/>
+    <input type="submit"/>
+</form>
+</body>
+</html>

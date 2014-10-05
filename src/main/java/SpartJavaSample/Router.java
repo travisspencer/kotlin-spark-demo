@@ -6,36 +6,34 @@ import org.picocontainer.PicoContainer;
 import spark.*;
 import spark.template.velocity.VelocityTemplateEngine;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static spark.Spark.halt;
 
-class Tinder extends SparkBase
+class Router extends SparkBase
 {
     private String path;
     private List<String> methods;
 
-    private Tinder(String path)
+    private Router(String path)
     {
         this.path = path;
     }
 
-    static Tinder route(String path)
+    static Router route(String path)
     {
-        return new Tinder(path);
+        return new Router(path);
     }
 
-    public Tinder havingMethod(String method)
+    public Router havingMethod(String method)
     {
         this.methods = Arrays.asList(method);
 
         return this;
     }
 
-    public Tinder havingMethods(String... methods)
+    public Router havingMethods(String... methods)
     {
         this.methods = Arrays.asList(methods);
 
@@ -120,11 +118,21 @@ class Tinder extends SparkBase
             Controllable controller = requestContainer.getComponent(controllerClass);
 
             // TODO: Weave output of before into process and then into after
-            controller.before();
+            boolean continue_ = controller.before(request, response);
 
-            controller.process(request, response, model);
+            if (continue_)
+            {
+                // Fire the controller's method depending on the HTTP method of the request
+                String httpMethod = request.requestMethod().toLowerCase();
+                Method method = controllerClass.getMethod(httpMethod, Request.class, Response.class, Map.class);
 
-            controller.after();
+                Object result = method.invoke(controller, request, response, model);
+
+                if (Boolean.TRUE.equals(result))
+                {
+                    controller.after(request, response);
+                }
+            }
         }
         catch (Exception e)
         {

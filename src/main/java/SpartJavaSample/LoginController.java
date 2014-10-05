@@ -5,13 +5,19 @@ import spark.Response;
 
 import java.util.Map;
 
-public class TokenController implements Controllable
+public class LoginController implements Controllable
 {
     @Override
     public boolean get(Request request, Response response, Map<String, Object> model)
     {
-        //return null; // TODO: Do work
+        model.put("test", 44);
 
+        return true;
+    }
+
+    @Override
+    public boolean post(Request request, Response response, Map<String, Object> model)
+    {
         return true;
     }
 }

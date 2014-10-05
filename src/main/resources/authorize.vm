@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Spark Test</h1>
+
+    <p><strong>User: </strong>$!user</p>
+
+    <dl>
+        #foreach ($e in $data.entrySet())
+            <dt>$e.key</dt>
+            <dd>$e.value</dd>
+        #end
+    </dl>
+</body>
+</html>
