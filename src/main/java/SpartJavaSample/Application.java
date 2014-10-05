@@ -21,13 +21,10 @@ public class Application implements SparkApplication
     @Override
     public void init()
     {
-        route("/authorize").havingMethods("get", "post")
-            .to(AuthorizeController.class, usingContainer(appContainer), renderedWith("authorize.vm"));
+        route("/authorize").to(AuthorizeController.class, usingContainer(appContainer), renderedWith("authorize.vm"));
 
-        route("/login").havingMethod("get")
-            .to(LoginController.class, usingContainer(appContainer), renderedWith("login.vm"));
+        route("/login").to(LoginController.class, usingContainer(appContainer), renderedWith("login.vm"));
 
-        route("/token").havingMethod("get")
-            .to(TokenController.class, usingContainer(appContainer));
+        route("/token").to(TokenController.class, usingContainer(appContainer));
     }
 }

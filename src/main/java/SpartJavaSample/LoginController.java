@@ -18,6 +18,10 @@ public class LoginController implements Controllable
     @Override
     public boolean post(Request request, Response response, Map<String, Object> model)
     {
-        return true;
+        request.session(); // Create session
+
+        response.redirect("/authorize");
+
+        return false;
     }
 }

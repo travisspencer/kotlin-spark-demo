@@ -14,7 +14,6 @@ import static spark.Spark.halt;
 class Router extends SparkBase
 {
     private String path;
-    private List<String> methods;
 
     private Router(String path)
     {
@@ -24,20 +23,6 @@ class Router extends SparkBase
     static Router route(String path)
     {
         return new Router(path);
-    }
-
-    public Router havingMethod(String method)
-    {
-        this.methods = Arrays.asList(method);
-
-        return this;
-    }
-
-    public Router havingMethods(String... methods)
-    {
-        this.methods = Arrays.asList(methods);
-
-        return this;
     }
 
     /**
@@ -52,7 +37,7 @@ class Router extends SparkBase
      */
     public <T extends Controllable> void to(Class<T> controllerClass, PicoContainer container, String template)
     {
-        methods.forEach(method -> addRoute(method, path, template, controllerClass, container));
+        addRouteForEachMethods(controllerClass, container, template);
     }
 
     /**
@@ -67,7 +52,7 @@ class Router extends SparkBase
      */
     public <T extends Controllable> void to(Class<T> controllerClass, PicoContainer container)
     {
-        methods.forEach(method -> addRoute(method, path, controllerClass, container));
+        addRouteForEachMethods(controllerClass, container, null);
     }
 
     // Sugar
@@ -104,6 +89,40 @@ class Router extends SparkBase
 
             return null; // Dummy value
         }));
+    }
+
+    private <T extends Controllable> void addRouteForEachMethods(Class<T> controllerClass, PicoContainer container, String template)
+    {
+        for (Method classMethod : controllerClass.getDeclaredMethods())
+        {
+            String classMethodName = classMethod.getName();
+            boolean isBeforeOrAfter = classMethodName.equals("before") || classMethodName.equals("after");
+
+            if (isBeforeOrAfter)
+            {
+                continue; // We don't want to route after or before using Spark, so skip these.
+            }
+
+            // See if the controller class' method is overriding one of Controllable's
+            for (Method interfaceMethod : Controllable.class.getMethods())
+            {
+                if (classMethodName.equals(interfaceMethod.getName()) && // method names match?
+                        classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
+                        Arrays.deepEquals(classMethod.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
+                {
+                    if (template == null)
+                    {
+                        addRoute(classMethodName, path, controllerClass, container);
+                    }
+                    else
+                    {
+                        addRoute(classMethodName, path, template, controllerClass, container);
+                    }
+
+                    break;
+                }
+            }
+        }
     }
 
     private <T extends Controllable> void router(Class<T> controllerClass, PicoContainer appContainer,
