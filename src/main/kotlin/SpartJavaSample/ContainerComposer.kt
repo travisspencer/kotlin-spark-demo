@@ -3,14 +3,16 @@ package SpartJavaSample
 import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
 
-SuppressWarnings("unused")
-object ContainerComposer {
-    public fun composeApplication(appContainer: DefaultPicoContainer) {
+class ContainerComposer : Composable
+{
+    public override fun composeApplication(appContainer: MutablePicoContainer)
+    {
         appContainer.addComponent(javaClass<AuthorizeController>())
         appContainer.addComponent(javaClass<TokenController>())
         appContainer.addComponent(javaClass<LoginController>())
     }
 
-    public fun composeRequest(container: MutablePicoContainer) {
+    public override fun composeRequest(container: MutablePicoContainer)
+    {
     }
 }

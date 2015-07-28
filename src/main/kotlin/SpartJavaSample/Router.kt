@@ -95,7 +95,7 @@ class Router private constructor(private val path: String, private var template:
        val requestContainer = DefaultPicoContainer(appContainer)
        var model : Map<String, Any> = emptyMap()
 
-       ContainerComposer.composeRequest(requestContainer)
+       //ContainerComposer.composeRequest(requestContainer)
 
        try
        {
