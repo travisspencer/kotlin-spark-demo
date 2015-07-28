@@ -14,19 +14,6 @@ import kotlin.util.measureTimeMillis
 
 class Router private constructor(private val path: String, private var template: String? = null) : SparkBase()
 {
-    /**
-     * Route a request to a controller using a particular template to generate the response and a parent container
-     * to resolve any dependencies.
-
-     * @param controllerClass the controller class that will handle the request/response
-     *
-     * @param container the parent container that will resolve any dependencies that aren't set at the request level
-     *                  by the ContainerComposer
-     *
-     * @param template the Velocity template file (relative to resources) to use when rendering the response
-     *
-     * @param  the Controllable type
-     */
     public fun <T : Controllable> routeTo(controllerClass: Class<T>, container: PicoContainer)
     {
         addRouteForEachMethods(controllerClass, container)
