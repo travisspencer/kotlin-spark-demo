@@ -3,11 +3,11 @@ package SpartJavaSample
 import spark.Request
 import spark.Response
 
-import java.util.HashMap
-
 public class AuthorizeController : Controllable() {
-    public override fun before(request: Request, response: Response): Boolean {
-        if (request.session(false) == null) {
+    public override fun before(request: Request, response: Response): Boolean
+    {
+        if (request.session(false) == null)
+        {
             response.redirect("/login")
 
             return false
@@ -16,16 +16,10 @@ public class AuthorizeController : Controllable() {
         return true
     }
 
-    public override fun get(request: Request, response: Response, model: MutableMap<String, Any>): Boolean {
-        val data = HashMap<String, String>()
-
-        data.put("e1", "e1 value")
-        data.put("e2", "e2 value")
-        data.put("e3", "e3 value")
-
-        model.put("user", "tspencer")
-        model.put("data", data)
-
-        return true
-    }
+    public override fun get(request: Request, response: Response): ControllerResult = ControllerResult(model = mapOf(
+            "user" to "jdoe",
+            "data" to mapOf(
+                    "e1" to "e1 value",
+                    "e2" to "e2 value",
+                    "e3" to "e3 value")))
 }

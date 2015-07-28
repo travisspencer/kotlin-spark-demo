@@ -56,7 +56,7 @@ class Router private constructor(private val path: String, private var template:
                     }
                     else
                     {
-                        addRoute(methodName, template!!, controllerClass, container)
+                        addRoute(methodName, template as String, controllerClass, container)
                     }
 
                     break
@@ -69,9 +69,7 @@ class Router private constructor(private val path: String, private var template:
     {
         val r = fun (request: Request, response: Response): ModelAndView
         {
-            var model = HashMap<String, String>()
-
-            router(type, container, model, request, response)
+            var model = router(type, container, request, response)
 
             return ModelAndView(model, template)
         }
@@ -89,12 +87,14 @@ class Router private constructor(private val path: String, private var template:
 
     private fun <T : Controllable> addRoute(httpMethod: String, type: Class<T>, container: PicoContainer)
     {
-        val r = Route()
+        val rr = fun (request: Request, response: Response): Any
         {
-            request, response -> router(type, container, HashMap<String, String>(), request, response)
+            router(type, container, request, response)
+
+            return Unit
         }
 
-        SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))
+        SparkBase.addRoute(httpMethod, SparkBase.wrap(path, rr))
     }
 
     /*    // Sugar
@@ -105,44 +105,54 @@ class Router private constructor(private val path: String, private var template:
         }
             */
         // Sugar
-    public fun andIsRenderedWith(template: String): Router {
-        this.template = template
+   public fun andIsRenderedWith(template: String): Router {
+       this.template = template
 
-        return this
-    }
+       return this
+   }
 
+   private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, request: Request, response: Response) : Map<String, Any>
+   {
+       val requestContainer = DefaultPicoContainer(appContainer)
+       var model : Map<String, Any> = emptyMap()
 
-   private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, model: Map<String, Any>, request: Request, response: Response) {
-        val requestContainer = DefaultPicoContainer(appContainer)
+       ContainerComposer.composeRequest(requestContainer)
 
-        ContainerComposer.composeRequest(requestContainer)
+       try
+       {
+           val controller = requestContainer.getComponent(controllerClass)
 
-        try {
-            val controller = requestContainer.getComponent(controllerClass)
-
-            // TODO: Weave output of before into process and then into after
-            val continue_ = controller.before(request, response)
-
-            if (continue_) {
+           if (controller.before(request, response))
+           {
                 // Fire the controller's method depending on the HTTP method of the request
-                val httpMethod = request.requestMethod().toLowerCase()
-                val method = controllerClass.getMethod(httpMethod, javaClass<Request>(), javaClass<Response>(), javaClass<Map<Any, Any>>())
+               val httpMethod = request.requestMethod().toLowerCase()
+               val method = controllerClass.getMethod(httpMethod, javaClass<Request>(), javaClass<Response>())
+               val result = method.invoke(controller, request, response)
 
-                val result = method.invoke(controller, request, response, model) as Boolean
+               if (result is ControllerResult && result.continueProcessing)
+               {
+                   controller.after(request, response)
 
-                if (result) {
-                    controller.after(request, response)
-                }
-            }
-        } catch (e: Exception) {
-            halt(500, "Server Error")
-        }
+                   model = result.model
+               }
+               else if (result is Boolean && result)
+               {
+                   controller.after(request, response)
+               }
+           }
+       }
+       catch (e: Exception)
+       {
+           halt(500, "Server Error")
+       }
 
+       return model
     }
 
-    companion object {
-
-        fun route(path: String): Router {
+    companion object
+    {
+        fun route(path: String): Router
+        {
             return Router(path)
         }
     }
