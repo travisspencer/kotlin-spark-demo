@@ -3,26 +3,41 @@ package SpartJavaSample
 import org.picocontainer.DefaultPicoContainer
 import spark.servlet.SparkApplication
 
-public class Application : SparkApplication {
-    val appContainer = DefaultPicoContainer()
+val appContainer = DefaultPicoContainer()
 
-    override fun init() {
-        ContainerComposer.composeApplication(appContainer)
+public class Application(var routes: () -> Unit) : SparkApplication {
+    init
+    {
+        routes.invoke()
+    }
 
-        "/authorize" routeTo AuthorizeController() usingContainer appContainer renderedWith "authorize.vme"
+    override fun init() {} //routes.invoke()
 
-        "/login" routeTo LoginController() usingContainer appContainer renderedWith "login.vm"
-
-        "/token" routeTo TokenController() usingContainer appContainer
+    companion object
+    {
+        fun host(routes: () -> Unit): Unit
+        {
+            Application(routes)
+        }
     }
 }
 
-fun main(args: Array<String>) = Application().init()
+fun main(args: Array<String>) = Application.host()
+{
+    // route "/foo" to AuthorizeController() andRenderWith "foo.vm"
+    System.out.println("Started")
 
-fun String.routeTo<T : Controllable>(controller: T): Router {
+    "/authorize".routesTo<AuthorizeController>() //.andIsRenderedWith("authorize.vm")
+
+    "/login".routesTo<LoginController>() //.andIsRenderedWith("login.vm")
+
+    "/token".routesTo<TokenController>()
+}
+
+inline fun String.routesTo<reified T : Controllable>(): Router {
     var router = Router.route(this)
 
-    router.to(controller)
+    router.routeTo(javaClass<T>(), appContainer)
 
     return router
 }

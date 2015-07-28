@@ -10,6 +10,7 @@ import java.lang.reflect.Method
 
 import spark.Spark.halt
 import java.util.*
+import kotlin.util.measureTimeMillis
 
 class Router private constructor(private val path: String) : SparkBase() {
 
@@ -26,71 +27,36 @@ class Router private constructor(private val path: String) : SparkBase() {
      *
      * @param  the Controllable type
      */
-    public fun <T : Controllable> to(controllerClass: Class<T>, container: PicoContainer, template: String) {
+    public fun <T : Controllable> routeTo(controllerClass: Class<T>, container: PicoContainer, template: String? = null)
+    {
         addRouteForEachMethods(controllerClass, container, template)
     }
 
-    // Sugar
-    public fun usingContainer(container: PicoContainer): Router {
-        val c = container
+    private fun <T : Controllable> addRouteForEachMethods(controllerClass: Class<T>, container: PicoContainer, template: String?)
+    {
+        for (classMethods in controllerClass.getDeclaredMethods())
+        {
+            val methodName = classMethods.getName()
 
-        return this
-    }
-
-    // Sugar
-    public fun renderedWith(template: String): Router {
-        val t = template
-
-        return this
-    }
-
-    /**
-     * Route a request to a controller using a particular parent container to resolve any decencies.
-
-     * The response will not have any contents.
-
-     * @param controllerClass the controller class that will handle the request/response
-     *
-     * @param container the parent container that will resolve any dependencies that aren't set at the request level
-     *                  by the ContainerComposer
-     *
-     * @param  the Controllable type
-     */
-    public fun <T : Controllable> to(controllerClass: Class<T>, container: PicoContainer) {
-        addRouteForEachMethods(controllerClass, container, null)
-    }
-
-    private fun <T : Controllable> addRoute(method: String, path: String, template: String, controllerClass: Class<T>, appContainer: PicoContainer) {
-        //SparkBase.addRoute(method, TemplateViewRouteImpl.create(path, VelocityTemplateEngine()))
-    }
-
-    private fun <T : Controllable> addRoute(method: String, path: String, controllerClass: Class<T>, appContainer: PicoContainer) {
-        /*SparkBase.addRoute(method, SparkBase.wrap(path)// There's no body for this method, so a reference to the model isn't needed. Pass in an object though
-                // to avoid the chance of an accidental NullPointerException.
-                // Dummy value
-        )*/
-    }
-
-    private fun <T : Controllable> addRouteForEachMethods(controllerClass: Class<T>, container: PicoContainer, template: String?) {
-        for (classMethod in controllerClass.getDeclaredMethods()) {
-            val classMethodName = classMethod.getName()
-            val isBeforeOrAfter = classMethodName == "before" || classMethodName == "after"
-
-            if (isBeforeOrAfter) {
+            if (methodName == "before" || methodName == "after")
+            {
                 continue // We don't want to route after or before using Spark, so skip these.
             }
 
             // See if the controller class' method is overriding one of Controllable's
-            for (interfaceMethod in javaClass<Controllable>().getMethods()) {
-                if (classMethodName == interfaceMethod.getName() && // method names match?
-                        classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
-                        Arrays.deepEquals(classMethod.getParameterTypes(), interfaceMethod.getParameterTypes()))
-                // Params match?
+            for (interfaceMethod in javaClass<Controllable>().getMethods())
+            {
+                if (methodName == interfaceMethod.getName() && // method names match?
+                        classMethods.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
+                        Arrays.deepEquals(classMethods.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
                 {
-                    if (template == null) {
-                        addRoute(classMethodName, path, controllerClass, container)
-                    } else {
-                        addRoute(classMethodName, path, template, controllerClass, container)
+                    if (template == null)
+                    {
+                        addRoute(methodName, controllerClass, container)
+                    }
+                    else
+                    {
+                        addRoute(methodName, template, controllerClass, container)
                     }
 
                     break
@@ -99,7 +65,54 @@ class Router private constructor(private val path: String) : SparkBase() {
         }
     }
 
-    private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, model: Map<String, Any>, request: Request, response: Response) {
+    private fun <T : Controllable> addRoute(httpMethod: String, template: String, type: Class<T>, container: PicoContainer)
+    {
+        val r = fun (request: Request, response: Response): ModelAndView
+        {
+            var model = HashMap<String, String>()
+
+            router(type, container, model, request, response)
+
+            return ModelAndView(model, template)
+        }
+/*
+        fun rr(request: Request, response: Response) : ModelAndView {
+            var model = HashMap<String, String>()
+
+            router(type, container, model, request, response)
+
+            return ModelAndView(model, template)
+        }*/
+
+        SparkBase.addRoute(httpMethod, TemplateViewRouteImpl.create(path, r, VelocityTemplateEngine()))
+    }
+
+    private fun <T : Controllable> addRoute(httpMethod: String, type: Class<T>, container: PicoContainer)
+    {
+        val r = Route()
+        {
+            request, response -> router(type, container, HashMap<String, String>(), request, response)
+        }
+
+        SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))
+    }
+
+    /*    // Sugar
+        public fun usingContainer(container: PicoContainer): Router {
+            val c = container
+
+            return this
+        }
+
+        // Sugar
+        public fun andIsRenderedWith(template: String): Router {
+            val t = template
+
+            return this
+        }*/
+
+
+   private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, model: Map<String, Any>, request: Request, response: Response) {
         val requestContainer = DefaultPicoContainer(appContainer)
 
         ContainerComposer.composeRequest(requestContainer)
@@ -115,9 +128,9 @@ class Router private constructor(private val path: String) : SparkBase() {
                 val httpMethod = request.requestMethod().toLowerCase()
                 val method = controllerClass.getMethod(httpMethod, javaClass<Request>(), javaClass<Response>(), javaClass<Map<Any, Any>>())
 
-                val result = method.invoke(controller, request, response, model)
+                val result = method.invoke(controller, request, response, model) as Boolean
 
-                if (java.lang.Boolean.TRUE == result) {
+                if (result) {
                     controller.after(request, response)
                 }
             }
