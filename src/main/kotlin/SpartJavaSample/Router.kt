@@ -12,15 +12,18 @@ import spark.Spark.halt
 import java.util.*
 import kotlin.util.measureTimeMillis
 
-class Router private constructor(private val path: String, private var template: String? = null) : SparkBase()
+class Router private constructor(val path: String, var appContainer: MutablePicoContainer, var controller: Controllable,
+                                 var template: String? = null) : SparkBase()
 {
-    public fun <T : Controllable> routeTo(controllerClass: Class<T>, container: PicoContainer)
+    public fun <T : Controllable> routeTo()
     {
-        addRouteForEachMethods(controllerClass, container)
+        addRouteForEachMethods()
     }
 
-    private fun <T : Controllable> addRouteForEachMethods(controllerClass: Class<T>, container: PicoContainer)
+    private fun addRouteForEachMethods()
     {
+        var controllerClass = controller.javaClass
+
         for (classMethod in controllerClass.getDeclaredMethods())
         {
             val methodName = classMethod.getName()
@@ -39,11 +42,11 @@ class Router private constructor(private val path: String, private var template:
                 {
                     if (template.isNullOrBlank())
                     {
-                        addRoute(methodName, controllerClass, container)
+                        addRoute(methodName)
                     }
                     else
                     {
-                        addTemplatizedRoute(methodName, template as String, controllerClass, container)
+                        addTemplatizedRoute(methodName, template as String)
                     }
 
                     break
@@ -52,11 +55,11 @@ class Router private constructor(private val path: String, private var template:
         }
     }
 
-    private fun <T : Controllable> addTemplatizedRoute(httpMethod: String, template: String, type: Class<T>, container: PicoContainer)
+    private fun addTemplatizedRoute(httpMethod: String, template: String)
     {
         val r = fun (request: Request, response: Response): ModelAndView
         {
-            var model = router(type, container, request, response)
+            var model = router(request, response)
 
             return ModelAndView(model, template)
         }
@@ -64,11 +67,11 @@ class Router private constructor(private val path: String, private var template:
         SparkBase.addRoute(httpMethod, TemplateViewRouteImpl.create(path, r, VelocityTemplateEngine()))
     }
 
-    private fun <T : Controllable> addRoute(httpMethod: String, type: Class<T>, container: PicoContainer)
+    private fun addRoute(httpMethod: String)
     {
         val r = fun (request: Request, response: Response): Any
         {
-            router(type, container, request, response)
+            router(request, response)
 
             return Unit
         }
@@ -76,21 +79,7 @@ class Router private constructor(private val path: String, private var template:
         SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))
     }
 
-    /*    // Sugar
-        public fun usingContainer(container: PicoContainer): Router {
-            val c = container
-
-            return this
-        }
-            */
-        // Sugar
-   public fun andIsRenderedWith(template: String): Router {
-       this.template = template
-
-       return this
-   }
-
-   private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, request: Request, response: Response) : Map<String, Any>
+   private fun router(request: Request, response: Response) : Map<String, Any>
    {
        val requestContainer = DefaultPicoContainer(appContainer)
        var model : Map<String, Any> = emptyMap()
@@ -99,6 +88,7 @@ class Router private constructor(private val path: String, private var template:
 
        try
        {
+           val controllerClass = controller.javaClass
            val controller = requestContainer.getComponent(controllerClass)
 
            if (controller.before(request, response))
@@ -130,9 +120,9 @@ class Router private constructor(private val path: String, private var template:
 
     companion object
     {
-        fun route(path: String): Router
+        fun route(path: String, container: MutablePicoContainer, controllable: Controllable, template: String?): Router
         {
-            return Router(path)
+            return Router(path, container, controllable, template)
         }
     }
 }
