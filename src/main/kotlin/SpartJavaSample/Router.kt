@@ -12,8 +12,8 @@ import spark.Spark.halt
 import java.util.*
 import kotlin.util.measureTimeMillis
 
-class Router private constructor(private val path: String) : SparkBase() {
-
+class Router private constructor(private val path: String, private var template: String? = null) : SparkBase()
+{
     /**
      * Route a request to a controller using a particular template to generate the response and a parent container
      * to resolve any dependencies.
@@ -27,16 +27,16 @@ class Router private constructor(private val path: String) : SparkBase() {
      *
      * @param  the Controllable type
      */
-    public fun <T : Controllable> routeTo(controllerClass: Class<T>, container: PicoContainer, template: String? = null)
+    public fun <T : Controllable> routeTo(controllerClass: Class<T>, container: PicoContainer)
     {
-        addRouteForEachMethods(controllerClass, container, template)
+        addRouteForEachMethods(controllerClass, container)
     }
 
-    private fun <T : Controllable> addRouteForEachMethods(controllerClass: Class<T>, container: PicoContainer, template: String?)
+    private fun <T : Controllable> addRouteForEachMethods(controllerClass: Class<T>, container: PicoContainer)
     {
-        for (classMethods in controllerClass.getDeclaredMethods())
+        for (classMethod in controllerClass.getDeclaredMethods())
         {
-            val methodName = classMethods.getName()
+            val methodName = classMethod.getName()
 
             if (methodName == "before" || methodName == "after")
             {
@@ -47,8 +47,8 @@ class Router private constructor(private val path: String) : SparkBase() {
             for (interfaceMethod in javaClass<Controllable>().getMethods())
             {
                 if (methodName == interfaceMethod.getName() && // method names match?
-                        classMethods.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
-                        Arrays.deepEquals(classMethods.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
+                        classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
+                        Arrays.deepEquals(classMethod.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
                 {
                     if (template == null)
                     {
@@ -56,7 +56,7 @@ class Router private constructor(private val path: String) : SparkBase() {
                     }
                     else
                     {
-                        addRoute(methodName, template, controllerClass, container)
+                        addRoute(methodName, template!!, controllerClass, container)
                     }
 
                     break
@@ -103,13 +103,13 @@ class Router private constructor(private val path: String) : SparkBase() {
 
             return this
         }
-
+            */
         // Sugar
-        public fun andIsRenderedWith(template: String): Router {
-            val t = template
+    public fun andIsRenderedWith(template: String): Router {
+        this.template = template
 
-            return this
-        }*/
+        return this
+    }
 
 
    private fun <T : Controllable> router(controllerClass: Class<T>, appContainer: PicoContainer, model: Map<String, Any>, request: Request, response: Response) {

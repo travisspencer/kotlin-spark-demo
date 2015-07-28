@@ -5,8 +5,8 @@ import spark.Response
 
 import java.util.HashMap
 
-public class AuthorizeController : Controllable {
-    override fun before(request: Request, response: Response): Boolean {
+public class AuthorizeController : Controllable() {
+    public override fun before(request: Request, response: Response): Boolean {
         if (request.session(false) == null) {
             response.redirect("/login")
 
@@ -16,7 +16,7 @@ public class AuthorizeController : Controllable {
         return true
     }
 
-    override fun get(request: Request, response: Response, model: MutableMap<String, Any>): Boolean {
+    public override fun get(request: Request, response: Response, model: MutableMap<String, Any>): Boolean {
         val data = HashMap<String, String>()
 
         data.put("e1", "e1 value")

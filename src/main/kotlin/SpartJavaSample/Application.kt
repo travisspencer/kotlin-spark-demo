@@ -3,11 +3,13 @@ package SpartJavaSample
 import org.picocontainer.DefaultPicoContainer
 import spark.servlet.SparkApplication
 
-val appContainer = DefaultPicoContainer()
+var appContainer = DefaultPicoContainer()
 
 public class Application(var routes: () -> Unit) : SparkApplication {
     init
     {
+        ContainerComposer.composeApplication(appContainer)
+
         routes.invoke()
     }
 
@@ -27,11 +29,13 @@ fun main(args: Array<String>) = Application.host()
     // route "/foo" to AuthorizeController() andRenderWith "foo.vm"
     System.out.println("Started")
 
-    "/authorize".routesTo<AuthorizeController>() //.andIsRenderedWith("authorize.vm")
+    "/authorize".routesTo<AuthorizeController>().andIsRenderedWith("authorize.vm")
 
-    "/login".routesTo<LoginController>() //.andIsRenderedWith("login.vm")
+    "/login".routesTo<LoginController>().andIsRenderedWith("login.vm")
 
     "/token".routesTo<TokenController>()
+
+    //"/foo" handledBy TokenController() andRenderedWith "foo.vm"
 }
 
 inline fun String.routesTo<reified T : Controllable>(): Router {

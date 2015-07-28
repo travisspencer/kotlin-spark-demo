@@ -11,9 +11,6 @@ object ContainerComposer {
         appContainer.addComponent(javaClass<LoginController>())
     }
 
-    public fun composeSession(container: MutablePicoContainer) {
-    }
-
     public fun composeRequest(container: MutablePicoContainer) {
     }
 }
