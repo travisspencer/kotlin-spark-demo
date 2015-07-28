@@ -50,7 +50,7 @@ class Router private constructor(private val path: String, private var template:
                         classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
                         Arrays.deepEquals(classMethod.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
                 {
-                    if (template == null)
+                    if (template.isNullOrBlank())
                     {
                         addRoute(methodName, controllerClass, container)
                     }
@@ -87,14 +87,14 @@ class Router private constructor(private val path: String, private var template:
 
     private fun <T : Controllable> addRoute(httpMethod: String, type: Class<T>, container: PicoContainer)
     {
-        val rr = fun (request: Request, response: Response): Any
+        val r = fun (request: Request, response: Response): Any
         {
             router(type, container, request, response)
 
             return Unit
         }
 
-        SparkBase.addRoute(httpMethod, SparkBase.wrap(path, rr))
+        SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))
     }
 
     /*    // Sugar
