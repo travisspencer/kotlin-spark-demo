@@ -56,7 +56,7 @@ class Router private constructor(private val path: String, private var template:
                     }
                     else
                     {
-                        addRoute(methodName, template as String, controllerClass, container)
+                        addTemplatizedRoute(methodName, template as String, controllerClass, container)
                     }
 
                     break
@@ -65,7 +65,7 @@ class Router private constructor(private val path: String, private var template:
         }
     }
 
-    private fun <T : Controllable> addRoute(httpMethod: String, template: String, type: Class<T>, container: PicoContainer)
+    private fun <T : Controllable> addTemplatizedRoute(httpMethod: String, template: String, type: Class<T>, container: PicoContainer)
     {
         val r = fun (request: Request, response: Response): ModelAndView
         {
@@ -73,14 +73,6 @@ class Router private constructor(private val path: String, private var template:
 
             return ModelAndView(model, template)
         }
-/*
-        fun rr(request: Request, response: Response) : ModelAndView {
-            var model = HashMap<String, String>()
-
-            router(type, container, model, request, response)
-
-            return ModelAndView(model, template)
-        }*/
 
         SparkBase.addRoute(httpMethod, TemplateViewRouteImpl.create(path, r, VelocityTemplateEngine()))
     }
