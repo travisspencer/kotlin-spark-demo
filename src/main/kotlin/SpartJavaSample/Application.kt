@@ -39,9 +39,9 @@ fun api(composer: Composable, routes: () -> List<Application.RouteData<Controlla
     Application(composer = composer, routes = routes).host()
 }
 
-fun <T : Controllable> path(path: String, to: Class<T>, renderWith: String? = null) : Application.RouteData<T>
+fun <T : Controllable> path(path: String, to: kotlin.reflect.KClass<T>, renderWith: String? = null) : Application.RouteData<T>
 {
-    return Application.RouteData(path, to, renderWith)
+    return Application.RouteData(path, to.java, renderWith)
 }
 
 fun <T> route(vararg values: T): kotlin.List<T> = listOf<T>(*values)
@@ -49,7 +49,7 @@ fun <T> route(vararg values: T): kotlin.List<T> = listOf<T>(*values)
 fun main(args: Array<String>) = api(composer = ContainerComposer())
 {
     route(
-            path("/login", to = LoginController::class.java, renderWith = "login.vm"),
-            path("/authorize", to = AuthorizeController::class .java, renderWith = "login.vm"),
-            path("/token", to = TokenController::class .java))
+            path("/login", to = LoginController::class, renderWith = "login.vm"),
+            path("/authorize", to = AuthorizeController::class, renderWith = "login.vm"),
+            path("/token", to = TokenController::class))
 }
