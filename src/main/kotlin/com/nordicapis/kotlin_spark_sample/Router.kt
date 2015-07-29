@@ -70,7 +70,7 @@ class Router constructor() : SparkBase()
         {
             router(request, response, container, controllerClass, composer)
 
-            return Unit
+            return response.body()
         }
 
         SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))

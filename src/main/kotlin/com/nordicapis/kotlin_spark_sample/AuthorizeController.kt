@@ -19,7 +19,7 @@ public class AuthorizeController : Controllable() {
     }
 
     public override fun get(request: Request, response: Response): ControllerResult = ControllerResult(model = mapOf(
-            "user" to "jdoe",
+            "user" to request.session(false).attribute("username"),
             "data" to mapOf(
                     "e1" to "e1 value",
                     "e2" to "e2 value",
