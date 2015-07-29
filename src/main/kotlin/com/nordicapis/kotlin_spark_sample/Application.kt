@@ -1,5 +1,9 @@
-package SpartJavaSample
+package com.nordicapis.kotlin_spark_sample
 
+import com.nordicapis.kotlin_spark_sample.Composable
+import com.nordicapis.kotlin_spark_sample.Controllable
+import com.nordicapis.kotlin_spark_sample.Router
+import com.nordicapis.kotlin_spark_sample.SimpleControllerComposer
 import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
 import spark.servlet.SparkApplication

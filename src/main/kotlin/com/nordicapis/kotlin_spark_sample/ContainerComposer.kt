@@ -1,5 +1,9 @@
-package SpartJavaSample
+package com.nordicapis.kotlin_spark_sample
 
+import com.nordicapis.kotlin_spark_sample.AuthorizeController
+import com.nordicapis.kotlin_spark_sample.Composable
+import com.nordicapis.kotlin_spark_sample.LoginController
+import com.nordicapis.kotlin_spark_sample.TokenController
 import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
 

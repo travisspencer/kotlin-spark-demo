@@ -1,4 +1,4 @@
-package SpartJavaSample
+package com.nordicapis.kotlin_spark_sample
 
 fun main(args: Array<String>) = api(composer = ContainerComposer())
 {

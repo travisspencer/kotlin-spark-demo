@@ -1,5 +1,6 @@
-package SpartJavaSample
+package com.nordicapis.kotlin_spark_sample
 
+import com.nordicapis.kotlin_spark_sample.ControllerResult
 import spark.Request
 import spark.Response
 

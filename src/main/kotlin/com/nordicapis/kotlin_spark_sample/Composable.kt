@@ -1,4 +1,4 @@
-package SpartJavaSample
+package com.nordicapis.kotlin_spark_sample
 
 import org.picocontainer.MutablePicoContainer
 

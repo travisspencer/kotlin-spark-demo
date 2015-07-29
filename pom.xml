@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>SpartJavaSample</groupId>
-    <artifactId>SpartJavaSample</artifactId>
+    <groupId>com.nordicapis</groupId>
+    <artifactId>kotlin_spark_sample</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>SpartJavaSample</name>
-    <url>http://maven.apache.org</url>
+    <name>Nordic APIs Kotlin / Spark Sample</name>
+    <url>http://nordicapis.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,7 +58,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>SpartJavaSample.SpartJavaSamplePackage</mainClass>
+                                    <mainClass>com.nordicapis.kotlin_spark_sample.kotlin_spark_samplePackage</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
