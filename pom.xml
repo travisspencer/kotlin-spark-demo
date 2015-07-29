@@ -8,7 +8,8 @@
     <packaging>jar</packaging>
 
     <name>Nordic APIs Kotlin / Spark Sample</name>
-    <url>http://nordicapis.com</url>
+    <!-- TODO: Update this with the perma-link of the blog post -->
+    <url>http://nordicapis.com/kotlin_spark_sample</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
