@@ -12,18 +12,11 @@ import spark.Spark.halt
 import java.util.*
 import kotlin.util.measureTimeMillis
 
-class Router private constructor(val path: String, var appContainer: MutablePicoContainer, var controller: Controllable,
-                                 var template: String? = null) : SparkBase()
+class Router constructor() : SparkBase()
 {
-    public fun <T : Controllable> routeTo()
+    public fun <T : Controllable> routeTo(path: String, container: PicoContainer, controllerClass: Class<T>,
+                                          template: String? = null)
     {
-        addRouteForEachMethods()
-    }
-
-    private fun addRouteForEachMethods()
-    {
-        var controllerClass = controller.javaClass
-
         for (classMethod in controllerClass.getDeclaredMethods())
         {
             val methodName = classMethod.getName()
@@ -42,11 +35,11 @@ class Router private constructor(val path: String, var appContainer: MutablePico
                 {
                     if (template.isNullOrBlank())
                     {
-                        addRoute(methodName)
+                        addRoute(methodName, path, container, controllerClass)
                     }
                     else
                     {
-                        addTemplatizedRoute(methodName, template as String)
+                        addTemplatizedRoute(methodName, template as String, path, container, controllerClass)
                     }
 
                     break
@@ -55,11 +48,11 @@ class Router private constructor(val path: String, var appContainer: MutablePico
         }
     }
 
-    private fun addTemplatizedRoute(httpMethod: String, template: String)
+    private fun <T: Controllable> addTemplatizedRoute(httpMethod: String, template: String, path: String, container: PicoContainer, controllerClass: Class<T>)
     {
         val r = fun (request: Request, response: Response): ModelAndView
         {
-            var model = router(request, response)
+            var model = router(request, response, container, controllerClass)
 
             return ModelAndView(model, template)
         }
@@ -67,11 +60,11 @@ class Router private constructor(val path: String, var appContainer: MutablePico
         SparkBase.addRoute(httpMethod, TemplateViewRouteImpl.create(path, r, VelocityTemplateEngine()))
     }
 
-    private fun addRoute(httpMethod: String)
+    private fun <T: Controllable> addRoute(httpMethod: String, path: String, container: PicoContainer, controllerClass: Class<T>)
     {
         val r = fun (request: Request, response: Response): Any
         {
-            router(request, response)
+            router(request, response, container, controllerClass)
 
             return Unit
         }
@@ -79,16 +72,15 @@ class Router private constructor(val path: String, var appContainer: MutablePico
         SparkBase.addRoute(httpMethod, SparkBase.wrap(path, r))
     }
 
-   private fun router(request: Request, response: Response) : Map<String, Any>
+   private fun <T: Controllable> router(request: Request, response: Response, container: PicoContainer, controllerClass: Class<T>) : Map<String, Any>
    {
-       val requestContainer = DefaultPicoContainer(appContainer)
+       val requestContainer = DefaultPicoContainer(container)
        var model : Map<String, Any> = emptyMap()
 
        //ContainerComposer.composeRequest(requestContainer)
 
        try
        {
-           val controllerClass = controller.javaClass
            val controller = requestContainer.getComponent(controllerClass)
 
            if (controller.before(request, response))
@@ -116,13 +108,5 @@ class Router private constructor(val path: String, var appContainer: MutablePico
        }
 
        return model
-    }
-
-    companion object
-    {
-        fun route(path: String, container: MutablePicoContainer, controllable: Controllable, template: String?): Router
-        {
-            return Router(path, container, controllable, template)
-        }
     }
 }
