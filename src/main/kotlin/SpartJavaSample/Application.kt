@@ -3,6 +3,7 @@ package SpartJavaSample
 import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
 import spark.servlet.SparkApplication
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.java
 
 public class Application(
@@ -39,9 +40,9 @@ fun api(composer: Composable, routes: () -> List<Application.RouteData<Controlla
     Application(composer = composer, routes = routes).host()
 }
 
-fun <T : Controllable> path(path: String, to: kotlin.reflect.KClass<T>, renderWith: String? = null) : Application.RouteData<T>
+fun <T : Controllable> path(path: String, to: KClass<T>, renderWith: String? = null) : Application.RouteData<T>
 {
     return Application.RouteData(path, to.java, renderWith)
 }
 
-fun <T> route(vararg values: T): kotlin.List<T> = listOf<T>(*values)
+fun <T> route(vararg values: T): List<T> = listOf<T>(*values)
