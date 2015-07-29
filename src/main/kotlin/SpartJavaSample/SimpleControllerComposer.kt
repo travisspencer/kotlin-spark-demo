@@ -1,3 +1,3 @@
 package SpartJavaSample
 
-public class SimpleControllerComposer() : Composable
+class SimpleControllerComposer() : Composable
