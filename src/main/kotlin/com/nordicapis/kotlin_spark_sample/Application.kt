@@ -32,7 +32,7 @@ public class Application(
         {
             val (path, controllerClass, template) = routeData
 
-            router.routeTo(path, appContainer, controllerClass, template)
+            router.routeTo(path, appContainer, controllerClass, composer, template)
         }
     }
 
