@@ -50,3 +50,5 @@
 # Crashlytics plugin (for Android Studio and IntelliJ)
 ### Maven template
 target/
+
+.DS_Store
