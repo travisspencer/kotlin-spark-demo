@@ -20,14 +20,12 @@ login.vm - The Apache Velocity template used by the LoginController
     <title>Login</title>
 </head>
 <body>
-<hgroup>
-    <h1>Spark Test</h1>
-    <h2>Login</h2>
-</hgroup>
+<h1>Spark Test</h1>
+<h2>Login</h2>
 
 <form method="post">
-    <p>Username: <input name="username"/></p>
-    <p>Password: <input name="password" type="password"/></p>
+    <p><label>Username: <input name="username"></label></p>
+    <p><label>Password: <input name="password" type="password"/></label></p>
     <input type="submit"/>
 </form>
 </body>

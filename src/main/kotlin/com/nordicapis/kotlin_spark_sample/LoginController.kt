@@ -24,7 +24,7 @@ public class LoginController : Controllable()
 {
     // If this isn't overidden, even with this trivial response, it won't be routed. So, this is the minimum
     // implementation to get the page to show up. Usually, a model will be created and returned in addition to the
-    // default response (which, because continueProcessing is trus, will cause the router to continue processing).
+    // default response (which, because continueProcessing is true, will cause the router to continue processing).
     public override fun get(request: Request, response: Response): ControllerResult = ControllerResult()
 
     public override fun post(request: Request, response: Response): ControllerResult

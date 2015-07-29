@@ -62,4 +62,4 @@ fun <T : Controllable> path(path: String, to: KClass<T>, renderWith: String? = n
     return Application.RouteData(path, to.java, renderWith)
 }
 
-fun <T> route(vararg values: T): List<T> = listOf<T>(*values)
+fun <T> route(vararg values: T): List<T> = listOf(*values)
