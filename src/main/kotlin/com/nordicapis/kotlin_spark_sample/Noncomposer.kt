@@ -12,20 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-TokenController.kt - The controller class that provides the logic for the token endpoint
+Noncomposer.kt - A trivial no-op composer for cases where DI isn't needed or desired
 */
 
 package com.nordicapis.kotlin_spark_sample
 
-import spark.Request
-import spark.Response
-
-public class TokenController : Controllable()
-{
-    public override fun get(request: Request, response: Response): ControllerResult
-    {
-        response.body("my good token")
-
-        return ControllerResult()
-    }
-}
+// For when DI isn't used
+class Noncomposer() : Composable
