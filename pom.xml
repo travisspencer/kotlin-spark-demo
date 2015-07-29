@@ -59,7 +59,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.nordicapis.kotlin_spark_sample.kotlin_spark_samplePackage</mainClass>
+                                    <mainClass>com.nordicapis.kotlin_spark_sample.Kotlin_spark_samplePackage</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
