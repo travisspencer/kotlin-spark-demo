@@ -45,11 +45,3 @@ fun <T : Controllable> path(path: String, to: kotlin.reflect.KClass<T>, renderWi
 }
 
 fun <T> route(vararg values: T): kotlin.List<T> = listOf<T>(*values)
-
-fun main(args: Array<String>) = api(composer = ContainerComposer())
-{
-    route(
-            path("/login", to = LoginController::class, renderWith = "login.vm"),
-            path("/authorize", to = AuthorizeController::class, renderWith = "login.vm"),
-            path("/token", to = TokenController::class))
-}
