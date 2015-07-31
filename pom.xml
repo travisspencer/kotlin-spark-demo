@@ -124,8 +124,8 @@ pom.xml - The Apache POM file that builds and packages the sample
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-parent</artifactId>
-            <version>1.7.7</version>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.10</version>
         </dependency>
     </dependencies>
 </project>

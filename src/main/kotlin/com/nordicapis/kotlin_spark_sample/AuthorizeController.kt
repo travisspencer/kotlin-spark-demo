@@ -17,18 +17,30 @@ AuthorizeController.kt - The controller class that provides the logic for the au
 
 package com.nordicapis.kotlin_spark_sample
 
+import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
+import kotlin.reflect.jvm.java
 
-public class AuthorizeController : Controllable() {
+public class AuthorizeController : Controllable()
+{
+    private val _logger = LoggerFactory.getLogger(AuthorizeController::class.java)
+
     public override fun before(request: Request, response: Response): Boolean
     {
+        _logger.trace("before on Authorize controller invoked")
+
         if (request.session(false) == null)
         {
+            _logger.debug("No session exists. Redirecting to login")
+
             response.redirect("/login")
 
+            // Return false to abort any further processing
             return false
         }
+
+        _logger.debug("Session exists")
 
         return true
     }
