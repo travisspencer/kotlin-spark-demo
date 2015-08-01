@@ -111,10 +111,6 @@ class Router constructor() : SparkBase()
 
                    model = result.model
                }
-               else if (result is Boolean && result)
-               {
-                   controller.after(request, response)
-               }
            }
        }
        catch (e: Exception)
