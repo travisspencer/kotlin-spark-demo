@@ -21,12 +21,11 @@ pom.xml - The Apache POM file that builds and packages the sample
 
     <groupId>com.nordicapis</groupId>
     <artifactId>kotlin_spark_sample</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>Nordic APIs Kotlin / Spark Sample</name>
-    <!-- TODO: Update this with the perma-link of the blog post -->
-    <url>http://nordicapis.com/kotlin_spark_sample</url>
+    <url>http://nordicapis.com/building-apis-on-the-jvm-using-kotlin-and-spark-part-1/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
