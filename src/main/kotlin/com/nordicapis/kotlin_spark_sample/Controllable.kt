@@ -21,7 +21,8 @@ import spark.Request
 import spark.Response
 
 SuppressWarnings("unused")
-abstract class Controllable {
+abstract class Controllable
+{
     public open fun before(request: Request, response: Response): Boolean = true
 
     public open fun get(request: Request, response: Response): ControllerResult = ControllerResult()
