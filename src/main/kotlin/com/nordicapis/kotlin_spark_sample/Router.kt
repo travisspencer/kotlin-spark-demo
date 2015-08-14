@@ -40,7 +40,7 @@ class Router constructor() : SparkBase()
             }
 
             // See if the controller class' method is overriding one of Controllable's
-            for (interfaceMethod in javaClass<Controllable>().getMethods())
+            for (interfaceMethod in Controllable::class.java.getMethods())
             {
                 if (methodName == interfaceMethod.getName() && // method names match?
                         classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?

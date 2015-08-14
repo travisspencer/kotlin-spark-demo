@@ -19,14 +19,15 @@ package com.nordicapis.kotlin_spark_sample
 
 import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
+import kotlin.reflect.jvm.java
 
 class ContainerComposer : Composable
 {
     public override fun composeApplication(appContainer: MutablePicoContainer)
     {
-        appContainer.addComponent(javaClass<AuthorizeController>())
-        appContainer.addComponent(javaClass<TokenController>())
-        appContainer.addComponent(javaClass<LoginController>())
+        appContainer.addComponent(AuthorizeController::class.java)
+        appContainer.addComponent(TokenController::class.java)
+        appContainer.addComponent(LoginController::class.java)
     }
 
     public override fun composeRequest(container: MutablePicoContainer)
