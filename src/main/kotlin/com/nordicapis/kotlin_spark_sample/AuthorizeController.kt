@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.java
 
 public class AuthorizeController : Controllable()
 {
-    private val _logger = LoggerFactory.getLogger(AuthorizeController::class.java)
+    private val _logger = LoggerFactory.getLogger(javaClass<AuthorizeController>())
 
     public override fun before(request: Request, response: Response): Boolean
     {
