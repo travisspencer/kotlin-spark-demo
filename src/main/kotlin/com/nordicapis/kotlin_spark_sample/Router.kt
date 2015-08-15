@@ -46,13 +46,13 @@ class Router constructor() : SparkBase()
                         classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
                         Arrays.deepEquals(classMethod.getParameterTypes(), interfaceMethod.getParameterTypes())) // Params match?
                 {
-                    if (template.isNullOrBlank())
+                    if (template == null || template.isBlank())
                     {
                         addRoute(methodName, path, container, controllerClass, composer)
                     }
                     else
                     {
-                        addTemplatizedRoute(methodName, template as String, path, container, controllerClass, composer)
+                        addTemplatizedRoute(methodName, template, path, container, controllerClass, composer)
                     }
 
                     break
