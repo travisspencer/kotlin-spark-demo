@@ -29,6 +29,7 @@ pom.xml - The Apache POM file that builds and packages the sample
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>0.12.1218</kotlin.version>
     </properties>
 
     <build>
@@ -38,7 +39,7 @@ pom.xml - The Apache POM file that builds and packages the sample
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <version>0.12.1218</version>
+                <version>${kotlin.version}</version>
 
                 <configuration/>
                 <executions>
@@ -88,12 +89,12 @@ pom.xml - The Apache POM file that builds and packages the sample
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>0.12.1218</version>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>0.12.1218</version>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sparkjava</groupId>
