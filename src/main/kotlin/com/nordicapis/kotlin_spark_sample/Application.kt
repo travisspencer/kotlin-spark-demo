@@ -21,7 +21,6 @@ import org.picocontainer.DefaultPicoContainer
 import org.picocontainer.MutablePicoContainer
 import spark.servlet.SparkApplication
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.java
 
 public class Application(
         var composer: Composable = Noncomposer(),

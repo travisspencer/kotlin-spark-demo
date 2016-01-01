@@ -20,11 +20,10 @@ package com.nordicapis.kotlin_spark_sample
 import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
-import kotlin.reflect.jvm.java
 
 public class AuthorizeController : Controllable()
 {
-    private val _logger = LoggerFactory.getLogger(javaClass<AuthorizeController>())
+    private val _logger = LoggerFactory.getLogger(AuthorizeController::class.java)
 
     public override fun before(request: Request, response: Response): Boolean
     {
