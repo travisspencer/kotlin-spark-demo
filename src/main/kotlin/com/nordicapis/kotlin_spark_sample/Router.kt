@@ -23,7 +23,6 @@ import spark.*
 import spark.Spark.halt
 import spark.template.velocity.VelocityTemplateEngine
 import java.util.*
-import kotlin.reflect.jvm.java
 
 class Router constructor() : SparkBase()
 {
@@ -40,7 +39,7 @@ class Router constructor() : SparkBase()
             }
 
             // See if the controller class' method is overriding one of Controllable's
-            for (interfaceMethod in javaClass<Controllable>().getMethods())
+            for (interfaceMethod in Controllable::class.java.methods)
             {
                 if (methodName == interfaceMethod.getName() && // method names match?
                         classMethod.getReturnType() == interfaceMethod.getReturnType() && // method return the same type?
@@ -103,7 +102,7 @@ class Router constructor() : SparkBase()
            {
                // Fire the controller's method depending on the HTTP method of the request
                val httpMethod = request.requestMethod().toLowerCase()
-               val method = controllerClass.getMethod(httpMethod, javaClass<Request>(), javaClass<Response>())
+               val method = controllerClass.getMethod(httpMethod, Request::class.java, Response::class.java)
                val result = method.invoke(controller, request, response)
 
                if (result is ControllerResult && result.continueProcessing)
