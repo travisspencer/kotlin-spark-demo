@@ -17,8 +17,6 @@ ControllerResult.kt - Simple data class that contains the information about a ro
 
 package com.nordicapis.kotlin_spark_sample
 
-import java.util.*
-
 data class ControllerResult(
         val continueProcessing: Boolean = true,
         val model: Map<String, Any> = emptyMap())
