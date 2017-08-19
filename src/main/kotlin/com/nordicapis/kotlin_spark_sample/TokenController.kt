@@ -20,10 +20,8 @@ package com.nordicapis.kotlin_spark_sample
 import spark.Request
 import spark.Response
 
-public class TokenController : Controllable()
-{
-    public override fun get(request: Request, response: Response): ControllerResult
-    {
+class TokenController : Controllable() {
+    override fun get(request: Request, response: Response): ControllerResult {
         response.body("my good token")
 
         return ControllerResult()

@@ -18,4 +18,4 @@ Noncomposer.kt - A trivial no-op composer for cases where DI isn't needed or des
 package com.nordicapis.kotlin_spark_sample
 
 // For when DI isn't used
-class Noncomposer() : Composable
+class Noncomposer : Composable
